@@ -53,14 +53,14 @@ const initialFormErrors = () => ({
   favFood: '',
   agreement: '',
 })
-const initialDisabled = true;
+const initialDisabled = () => true;
 
 export default function App() {
   const [values, setValues] = useState(initialValues());
   const [formErrors, setFormErrors] = useState(initialFormErrors());
   const [successMsg, setSuccessMsg] = useState();
   const [failureMsg, setFailureMsg] = useState();
-  const [isDisabled, setIsDisabled] = useState(initialDisabled);
+  const [isDisabled, setIsDisabled] = useState(initialDisabled());
 
   useEffect(() => {
     formSchema.isValid(values).then(valid => setIsDisabled(!valid))
@@ -75,14 +75,14 @@ export default function App() {
 
   const onChange = evt => {
     let { type, name, checked, value } = evt.target;
-    value = type == 'checkbox' ? checked : value
+    value = type == 'checkbox' ? checked : value;
     validate(name, value);
     setValues({ ...values, [name]: value });
   }
 
   const onSubmit = evt => {
     evt.preventDefault();
-    setIsDisabled(initialDisabled);
+    setIsDisabled(initialDisabled());
     axios.post("https://webapis.bloomtechdev.com/registration", values)
       .then(res => {
         setValues(initialValues())
@@ -93,7 +93,6 @@ export default function App() {
         setFailureMsg(err.response.data.message);
         setSuccessMsg()
       })
-      .finally(() => setValues(initialValues()))
   }
 
   return (
